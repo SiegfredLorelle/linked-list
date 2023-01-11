@@ -8,8 +8,24 @@ class Linked_List:
         self.head = None
         self.tail = None
 
-    def create_list(self, number_of_nodes, elements):
-        print(number_of_nodes, elements)
+    def create_list(self, elements):
+        # If no no elements, then just inform user that linked list is made with no nodes
+        if len(elements) <= 0:
+            print("Linked List created with 0 nodes.\n")
+            return
+
+        # Create a node for first element and set it as head
+        self.head = Node(elements[0])
+
+        if len(elements) > 1:
+            # Create a node for each element and set the pointer accordingly
+            current = self.head
+            for element in elements[1:]:
+                current.next = Node(element)
+                current = current.next
+
+        # Display the linked list
+        self.display()
 
     def add_at_beginning(self, element):
         ...
@@ -21,7 +37,16 @@ class Linked_List:
         ...
 
     def display(self):
-        ...
+        if self.head:
+            print("\nDisplaying linked list:")
+            current = self.head
+            while current != None:
+                print(f"{current.element} -> ", end="")
+                current = current.next
+            print("\n")
+        
+        else:
+            print("Sorry, linked list seems to be empty or that its head is not configured correctly.")
 
     def count(self):
         ...
@@ -63,9 +88,35 @@ class App:
             # Create a linked list
             ll = Linked_List()
             # Asks infos needed to create the linked list
-            number_of_nodes, elements = self.create_list_info()
+            elements = self.create_list_info()
             # Add the nodes to the linked list
-            ll.create_list(number_of_nodes, elements)
+            ll.create_list(elements)
+        
+        elif self.input_keys["choice"][choice] == "add at beginning":
+            ...
+
+        elif self.input_keys["choice"][choice] == "add after":
+            ...
+
+        elif self.input_keys["choice"][choice] == "delete":
+            ...
+
+        elif self.input_keys["choice"][choice] == "display":
+            ...
+
+        elif self.input_keys["choice"][choice] == "count":
+            ...
+        
+        elif self.input_keys["choice"][choice] == "reverse":
+            ...
+        
+        elif self.input_keys["choice"][choice] == "search":
+            ...
+        
+        elif self.input_keys["choice"][choice] == "quit":
+            ...
+        
+        # RETURN MAIN MENU
 
 
 
@@ -79,6 +130,7 @@ class App:
             except (TypeError, ValueError):
                 print("Number of nodes must be an integer.\n")
             else:
+                print()
                 break
 
         # Ask for the elements of each nodes (converts the element to int or float if it is one)
@@ -98,7 +150,7 @@ class App:
                         pass
                 elements.append(element)
                 break
-        return number_of_nodes, elements
+        return elements
 
 if __name__ == "__main__":
     App()
