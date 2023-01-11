@@ -116,7 +116,8 @@ class App:
         elif self.input_keys["choice"][choice] == "quit":
             ...
         
-        # RETURN MAIN MENU
+        input("Press anything to proceed ...  ")
+        self.main_menu()
 
 
 
