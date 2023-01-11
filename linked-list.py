@@ -1,3 +1,5 @@
+import sys
+
 class Node:
     def __init__(self, element):
         self.element = element
@@ -11,7 +13,7 @@ class Linked_List:
     def create_list(self, elements):
         # If no no elements, then just inform user that linked list is made with no nodes
         if len(elements) <= 0:
-            print("Linked List created with 0 nodes.\n")
+            print("Linked List created with 0 nodes.")
             return
 
         # Create a node for first element and set it as head
@@ -28,7 +30,18 @@ class Linked_List:
         self.display()
 
     def add_at_beginning(self, element):
-        ...
+        # Create a node for the new element
+        added_node = Node(element)
+
+        # If there are other nodes, then point the new node to the head of linked list
+        if self.head:
+            added_node.next = self.head
+
+        # Make the added node the head to indicate it as the start of linked list
+        self.head = added_node
+
+        # Display the linked list
+        self.display()
 
     def add_after(self, element):
         ...
@@ -38,12 +51,12 @@ class Linked_List:
 
     def display(self):
         if self.head:
-            print("\nDisplaying linked list:")
+            print("\nLinked list:")
             current = self.head
             while current != None:
                 print(f"{current.element} -> ", end="")
                 current = current.next
-            print("\n")
+            print()
         
         else:
             print("Sorry, linked list seems to be empty or that its head is not configured correctly.")
@@ -58,11 +71,12 @@ class Linked_List:
 class App:
 
     input_keys = {
-        "choice": {1: "create list", 2: "add at beginning", 3: "add after", 4: "delete", 5: "delete", 6: "count", 7: "reverse", 8: "search", 9: "quit"}
+        "choice": {1: "create list", 2: "add at beginning", 3: "add after", 4: "delete", 5: "display", 6: "count", 7: "reverse", 8: "search", 9: "quit"}
 
     }
 
     def __init__(self):
+        self.ll = None
         self.main_menu()
 
     def main_menu(self):
@@ -86,14 +100,18 @@ class App:
     def input_manager(self, choice):
         if self.input_keys["choice"][choice] == "create list":
             # Create a linked list
-            ll = Linked_List()
+            self.ll = Linked_List()
             # Asks infos needed to create the linked list
             elements = self.create_list_info()
             # Add the nodes to the linked list
-            ll.create_list(elements)
+            self.ll.create_list(elements)
         
         elif self.input_keys["choice"][choice] == "add at beginning":
-            ...
+            if self.ll_exist():
+                element = self.ask_for_element("Enter element to insert at the beginning:  ")
+                self.ll.add_at_beginning(element)
+
+            
 
         elif self.input_keys["choice"][choice] == "add after":
             ...
@@ -102,7 +120,8 @@ class App:
             ...
 
         elif self.input_keys["choice"][choice] == "display":
-            ...
+            if self.ll_exist():
+                self.ll.display()
 
         elif self.input_keys["choice"][choice] == "count":
             ...
@@ -114,9 +133,9 @@ class App:
             ...
         
         elif self.input_keys["choice"][choice] == "quit":
-            ...
+            sys.exit("Closing the program ...\n")
         
-        input("Press anything to proceed ...  ")
+        input("\nPress enter to proceed ...  ")
         self.main_menu()
 
 
@@ -127,6 +146,7 @@ class App:
             try:
                 number_of_nodes = int(input("How many nodes does the linked list have?  "))
                 if number_of_nodes < 0:
+                    print("Number of nodes cannot be negative.\n")
                     continue
             except (TypeError, ValueError):
                 print("Number of nodes must be an integer.\n")
@@ -134,24 +154,40 @@ class App:
                 print()
                 break
 
-        # Ask for the elements of each nodes (converts the element to int or float if it is one)
+        # Ask for the elements for each node
         elements=[]
         for i in range(number_of_nodes):
-            while True:
-                element = input(f"Enter your element[{i}]:  ")
-                if not element:
-                    print("Element cannot be empty.")
-                    continue
-                try:
-                    element = int(element)
-                except (TypeError, ValueError):
-                    try:
-                        element = float(element)
-                    except (TypeError, ValueError):
-                        pass
-                elements.append(element)
-                break
+            element = self.ask_for_element(f"Enter your element[{i}]:  ")
+            elements.append(element)
         return elements
+
+    # Ask for an element/value and converts it to int or float if necessary
+    def ask_for_element(self, msg):
+        while True:
+            element = input(msg)
+            if not element:
+                print("Element cannot be empty.")
+                continue
+            try:
+                element = int(element)
+            except (TypeError, ValueError):
+                try:
+                    element = float(element)
+                except (TypeError, ValueError):
+                    pass
+            return element
+    
+
+    def ll_exist(self):
+        if self.ll:
+            return True
+        else:
+            print("No Linked List yet. Create a linked list by choosing 1 in Main Menu.\n")
+            return False
 
 if __name__ == "__main__":
     App()
+
+
+# TODO
+# if when creating linked list and a current linked list exists, ask again to if user want to delete current linked list
