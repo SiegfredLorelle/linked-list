@@ -11,9 +11,8 @@ class Linked_List:
         self.tail = None
 
     def create_list(self, elements):
-        # If no no elements, then just inform user that linked list is made with no nodes
+        # If no elements, then just inform user that linked list is made with no nodes
         if len(elements) <= 0:
-            print("Linked List created with 0 nodes.")
             return
 
         # Create a node for first element and set it as head
@@ -30,11 +29,9 @@ class Linked_List:
     def add_at_beginning(self, element):
         # Create a node for the new element
         added_node = Node(element)
-
         # If there are other nodes, then point the new node to the head of linked list
         if self.head:
             added_node.next = self.head
-
         # Make the added node the head to indicate it as the start of linked list
         self.head = added_node
 
@@ -43,7 +40,7 @@ class Linked_List:
         # Traverse the linked list until the given position is reached (counter represents current position)
         counter = 1
         current = self.head
-        while current != None:
+        while current:
             # When position is reach, create a node for the new element, point the new node to the where current node points, point the current node to the new node
             if counter == position:
                 added_node = Node(element)
@@ -65,16 +62,17 @@ class Linked_List:
 
         # Check if the element of the next node is the element to be deleted, if yes then point to where the next node points (also point deleted node to None)
         else:
-            while current.next != None:
+            while current.next:
                 if current.next.element == element:
                     after_delete_node = current.next.next
                     current.next.next = None
                     current.next = after_delete_node
-                    break
+                    return
                 # If next node is not the one to be deleted, then go to next node
                 current = current.next
-            else:
-                print(f"\nElement '{element}' is not found in the linked list. No node was deleted.")
+
+        # If it did not return within while block, then the element is not found
+        print(f"\nElement '{element}' is NOT found in the linked list. No node was deleted.")
 
 
     def display(self):
@@ -83,15 +81,16 @@ class Linked_List:
             print("\nLinked list seems to be empty.")
             return
 
-        # If linked list is not empty, then traverse the linked list, printing the element of each node
+        # Traverse the linked list, printing the element of each node
         print("\nLinked list:")
         current = self.head
-        while current != None:
+        while current:
+            # Print the element of the node, and represent the pointer as arrow pointing to next node
             print(f"{current.element} -> ", end="")
-            
+            # Assigns the tail to the last node (decided to assign it in display method, because display is always called every change in linked list)
             if not current.next:
                 self.tail = current
-
+            # Go to next node
             current = current.next
         print()
 
@@ -110,16 +109,28 @@ class Linked_List:
 
 
     def reverse(self, node):
-
+        """ Recusrive """
         if not node.next:
             self.tail, self.head = self.head, self.tail
             self.tail.next = None
             return self.head
         
-        tmp_node = self.reverse(node.next)
-        tmp_node.next = node
+        node_at_right = self.reverse(node.next)
+        node_at_right.next = node
         return node
 
+    def search(self, element):
+        current = self.head
+        position = 1
+        while current:
+            if current.element == element:
+                print(f"\nElement '{element}' is found at position {position}.")
+                return
+            # Go to next node
+            current = current.next
+            position += 1
+        print(f"\nElement '{element}' is NOT found in the linked list.")
+            
 
 
 class App:
@@ -154,6 +165,7 @@ class App:
     def input_manager(self, choice):
         """ Execute commands depending on user input """
         if self.input_keys["choice"][choice] == "create list":
+            #TODO IF LL EXISTS ASK IF WANT TO DELETE IT
             # Create a linked list
             self.ll = Linked_List()
             # Asks infos needed to create the linked list
@@ -173,31 +185,21 @@ class App:
 
         elif self.input_keys["choice"][choice] == "add after":
             # Ensures the linked list exists, and that it is not empty
-            if self.ll_exist():
-                if self.ll.count() == 0:
-                    print(f"\nLinked List have {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
-
-                else:
-                    # Ask for element to insert, and the position where to insert the element (element is inserted after the given position)
-                    element = self.ask_for_element("\nEnter element to insert:  ")
-                    position = self.ask_for_position("\nEnter position after which the element is inserted:  ")
-                    # Insert the element, then display the linked list
-                    self.ll.add_after(element, position)
-                    self.ll.display()
-
+            if self.ll_exist() and not self.ll_empty():
+                # Ask for element to insert, and the position (1 based-index) where to insert the element (element is inserted after the given position)
+                element = self.ask_for_element("\nEnter element to insert:  ")
+                position = self.ask_for_position("\nEnter position after which the element is inserted:  ")
+                # Insert the element, then display the linked list
+                self.ll.add_after(element, position)
+                self.ll.display()
 
         elif self.input_keys["choice"][choice] == "delete":
             # Ensures the linked list exists, and that it is not empty
-            if self.ll_exist():
-                if self.ll.count() == 0:
-                    print(f"\nLinked List have {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
-
+            if self.ll_exist() and not self.ll_empty():
                 # Asks for the element to delete, delete it if found, then display the linked list
-                else:
-                    element = self.ask_for_element("\nEnter element to delete:  ")
-                    self.ll.delete(element)
-                    self.ll.display()
-
+                element = self.ask_for_element("\nEnter element to delete:  ")
+                self.ll.delete(element)
+                self.ll.display()
 
         elif self.input_keys["choice"][choice] == "display":
             """ Display the linked list if it exists """
@@ -212,18 +214,16 @@ class App:
         elif self.input_keys["choice"][choice] == "reverse":
             """ Reverses the linked list if it exists and is not empty """
             # Ensures the linked list exists, and that it is not empty
-            if self.ll_exist():
-                if self.ll.count() == 0:
-                    print(f"\nLinked List has {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
+            if self.ll_exist() and not self.ll_empty():
+                # Reverse, then display the link list
+                self.ll.reverse(self.ll.head)
+                self.ll.display()
 
-                # If linked list is not empty, then reverse and display it
-                else:
-                    self.ll.reverse(self.ll.head)
-                    self.ll.display()
-        
         elif self.input_keys["choice"][choice] == "search":
-            ...
-        
+            if self.ll_exist():
+                element = self.ask_for_element("\nEnter element to search:  ")
+                self.ll.search(element)
+
         elif self.input_keys["choice"][choice] == "quit":
             sys.exit("\nClosing the program ...\n")
         
@@ -243,7 +243,6 @@ class App:
             except (TypeError, ValueError):
                 print("\nNumber of nodes must be an integer.")
             else:
-                print()
                 break
 
         # Ask for the elements for each node
@@ -277,6 +276,12 @@ class App:
             print("\nNo Linked List yet. Create a linked list by choosing 1 in Main Menu.")
             return False
 
+    def ll_empty(self):
+        """ Check if linked list is empty """
+        if self.ll.count() == 0:
+            print(f"\nLinked List has {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
+            return True
+        return False
     def ask_for_position(self, msg):
         """ Ask for a position (1-based index) """
         while True:
@@ -303,4 +308,3 @@ if __name__ == "__main__":
 
 # TODO
 # When creating linked list and a current linked list exists, ask again to if user want to delete current linked list
-# Search
