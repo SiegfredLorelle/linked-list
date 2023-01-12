@@ -71,8 +71,8 @@ class Linked_List:
                 # If next node is not the one to be deleted, then go to next node
                 current = current.next
 
-        # If it did not return within while block, then the element is not found
-        print(f"\nElement '{element}' is NOT found in the linked list. No node was deleted.")
+            # If it did not return within while block, then the element is not found
+            print(f"\nElement '{element}' is NOT found in the linked list. No node was deleted.")
 
 
     def display(self):
@@ -134,10 +134,7 @@ class Linked_List:
 
 
 class App:
-    input_keys = {
-        "choice": {1: "create list", 2: "add at beginning", 3: "add after", 4: "delete", 5: "display", 6: "count", 7: "reverse", 8: "search", 9: "quit"}
-
-    }
+    input_choice_keys = {1: "create list", 2: "add at beginning", 3: "add after", 4: "delete", 5: "display", 6: "count", 7: "reverse", 8: "search", 9: "quit"}
 
     def __init__(self):
         self.ll = None
@@ -151,7 +148,7 @@ class App:
         while True:
             try:
                 choice = int(input("What do you want to do?  ")) 
-                if choice not in self.input_keys["choice"]:
+                if choice not in self.input_choice_keys:
                     print("\nChoice must be 1-9 inclusive.\n")
                     continue
             except (TypeError, ValueError):
@@ -163,19 +160,30 @@ class App:
         self.input_manager(choice)
 
     def input_manager(self, choice):
-        """ Execute commands depending on user input """
-        if self.input_keys["choice"][choice] == "create list":
-            #TODO IF LL EXISTS ASK IF WANT TO DELETE IT
+        """ Execute commands based on user input """
+        if self.input_choice_keys[choice] == "create list":
+            # If a link list already exists, ask the user if its okay to overwrite the current linked list to create a new one
+            if self.ll and self.ll.count() != 0:
+                while True:
+                    try:
+                        create_new_ll = input("\nA linked list already exists. Would you like to create a new one, which overwrites the current linked list? [y/n]:  ")[0].lower()
+                        if create_new_ll == "n":
+                            input("\nPress enter to proceed ...  ")
+                            self.main_menu()
+                        elif create_new_ll == "y":
+                            break
+                    except IndexError:
+                        continue
+
             # Create a linked list
             self.ll = Linked_List()
             # Asks infos needed to create the linked list
-            elements = self.create_list_info()
+            elements = self.ask_ll_info()
             # Add the nodes to the linked list using the given elements, then display the linked list
             self.ll.create_list(elements)
             self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "add at beginning":
-            """ Inserts the given element at the beginning and displays the linked list """
+        elif self.input_choice_keys[choice] == "add at beginning":
             # Ensures the linked list exists
             if self.ll_exist():
                 # Ask for an element to insert at the beginning, insert it, then display the linked list
@@ -183,17 +191,17 @@ class App:
                 self.ll.add_at_beginning(element)
                 self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "add after":
+        elif self.input_choice_keys[choice] == "add after":
             # Ensures the linked list exists, and that it is not empty
             if self.ll_exist() and not self.ll_empty():
                 # Ask for element to insert, and the position (1 based-index) where to insert the element (element is inserted after the given position)
                 element = self.ask_for_element("\nEnter element to insert:  ")
-                position = self.ask_for_position("\nEnter position after which the element is inserted:  ")
+                position = self.ask_for_position("\nEnter position after which the element will be inserted:  ")
                 # Insert the element, then display the linked list
                 self.ll.add_after(element, position)
                 self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "delete":
+        elif self.input_choice_keys[choice] == "delete":
             # Ensures the linked list exists, and that it is not empty
             if self.ll_exist() and not self.ll_empty():
                 # Asks for the element to delete, delete it if found, then display the linked list
@@ -201,38 +209,40 @@ class App:
                 self.ll.delete(element)
                 self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "display":
-            """ Display the linked list if it exists """
+        elif self.input_choice_keys[choice] == "display":
+            # Display the linked list if it exists
             if self.ll_exist():
                 self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "count":
-            """ Prints the number of nodes in the linked list if it exists """
+        elif self.input_choice_keys[choice] == "count":
+            # Prints the number of nodes in the linked list if it exists
             if self.ll_exist():
                 print(f"\nLinked list has {self.ll.count()} node(s).")
 
-        elif self.input_keys["choice"][choice] == "reverse":
-            """ Reverses the linked list if it exists and is not empty """
+        elif self.input_choice_keys[choice] == "reverse":
             # Ensures the linked list exists, and that it is not empty
             if self.ll_exist() and not self.ll_empty():
                 # Reverse, then display the link list
                 self.ll.reverse(self.ll.head)
                 self.ll.display()
 
-        elif self.input_keys["choice"][choice] == "search":
+        elif self.input_choice_keys[choice] == "search":
+            # Ensures the linked list exists, and that it is not empty
             if self.ll_exist():
+                # Asks for element to search, and search for it
                 element = self.ask_for_element("\nEnter element to search:  ")
                 self.ll.search(element)
 
-        elif self.input_keys["choice"][choice] == "quit":
+        elif self.input_choice_keys[choice] == "quit":
             sys.exit("\nClosing the program ...\n")
-        
+
+        # Add a buffer after every command to let user read infos before going back to main menu
         input("\nPress enter to proceed ...  ")
         self.main_menu()
 
 
-
-    def create_list_info(self):
+    def ask_ll_info(self):
+        """ Asks the elements of the nodes of the linked list """
         # Ask how many nodes the linked list should have
         while True:
             try:
@@ -282,23 +292,23 @@ class App:
             print(f"\nLinked List has {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
             return True
         return False
+
     def ask_for_position(self, msg):
         """ Ask for a position (1-based index) """
         while True:
             try:
                 position = int(input(msg))
                 if position <= 0:
-                    print("Position must be positive (first position is 1).\n")
+                    print("\nPosition must be positive (first position is 1).")
                     continue
                 elif position > self.ll.count():
                     print(f"There are only {self.ll.count()} node(s).\n")
                     continue
             except (TypeError, ValueError):
-                print("Position must be an integer.\n")
+                print("\nPosition must be an integer.")
                 continue
             else:
                 return position
-
 
 
 
