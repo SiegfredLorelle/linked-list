@@ -63,12 +63,34 @@ class Linked_List:
 
 
     def delete(self, element):
-        ...
+        current = self.head
+        # Check the if the element to be deleted is in the first node, if yes then point head to next node (also point deleted node to None)
+        if current.element == element:
+            after_delete_node = current.next
+            current.next = None
+            self.head = after_delete_node
+
+        # Check if the element of the next node is the element to be deleted, if yes then point to where the next node points (also point deleted node to None)
+        else:
+            while current.next != None:
+                if current.next.element == element:
+                    after_delete_node = current.next.next
+                    current.next.next = None
+                    current.next = after_delete_node
+                    break
+                # If next node is not the one to be deleted, then go to next node
+                current = current.next
+            else:
+                print(f"\nElement '{element}' is not found in the linked list. No node was deleted.")
+
+        # Display the linked list
+        self.display()
+
 
     def display(self):
         # If linked list is empty inform the user about it
         if not self.head:
-            print("Sorry, linked list seems to be empty or that its head is not configured correctly.")
+            print("\nLinked list seems to be empty.")
             return
 
         # If linked list is not empty, then traverse the linked list, printing the element of each node
@@ -115,13 +137,13 @@ class App:
             try:
                 choice = int(input("What do you want to do?  ")) 
                 if choice not in self.input_keys["choice"]:
-                    print("Choice must be 1-9 inclusive.\n")
+                    print("\nChoice must be 1-9 inclusive.\n")
                     continue
             except (TypeError, ValueError):
-                print("Only enter the assigned number for your choice (e.g., 3).\n")
+                print("\nOnly enter the assigned number for your choice (e.g., 3).\n")
             else:
                 break
-        print()
+
         # Execute commands depending on user input
         self.input_manager(choice)
 
@@ -138,25 +160,31 @@ class App:
         elif self.input_keys["choice"][choice] == "add at beginning":
             # Check if first if linked list exists, if yes then ask for an element and add it at the beginning
             if self.ll_exist():
-                element = self.ask_for_element("Enter element to insert at the beginning:  ")
+                element = self.ask_for_element("\nEnter element to insert at the beginning:  ")
                 self.ll.add_at_beginning(element)
 
         elif self.input_keys["choice"][choice] == "add after":
             if self.ll_exist():
                 # Ensures the linked list is not empty
                 if self.ll.count() == 0:
-                    print(f"Linked List have {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
+                    print(f"\nLinked List have {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
 
                 else:
                     # Ask for element to insert
-                    element = self.ask_for_element("Enter element to insert:  ")
+                    element = self.ask_for_element("\nEnter element to insert:  ")
                     # Get the a position, element will be inserted after the given position
-                    position = self.ask_for_position("Enter position after which the element is inserted:  ")
+                    position = self.ask_for_position("\nEnter position after which the element is inserted:  ")
                     # Insert the element
                     self.ll.add_after(element, position)
 
         elif self.input_keys["choice"][choice] == "delete":
-            ...
+            if self.ll_exist():
+                if self.ll.count() == 0:
+                    print(f"\nLinked List have {self.ll.count()} nodes. I suggest adding an element at the beginning by choosing 2 in Main Menu.")
+
+                else:
+                    element = self.ask_for_element("\nEnter element to delete:  ")
+                    self.ll.delete(element)
 
         elif self.input_keys["choice"][choice] == "display":
             if self.ll_exist():
@@ -164,7 +192,7 @@ class App:
 
         elif self.input_keys["choice"][choice] == "count":
             if self.ll_exist():
-                print(f"There is {self.ll.count()} node(s).")
+                print(f"\nThere is {self.ll.count()} node(s).")
         
         elif self.input_keys["choice"][choice] == "reverse":
             ...
@@ -173,7 +201,7 @@ class App:
             ...
         
         elif self.input_keys["choice"][choice] == "quit":
-            sys.exit("Closing the program ...\n")
+            sys.exit("\nClosing the program ...\n")
         
         input("\nPress enter to proceed ...  ")
         self.main_menu()
@@ -184,12 +212,12 @@ class App:
         # Ask how many nodes the linked list should have
         while True:
             try:
-                number_of_nodes = int(input("How many nodes does the linked list have?  "))
+                number_of_nodes = int(input("\nHow many nodes does the linked list have?  "))
                 if number_of_nodes < 0:
-                    print("Number of nodes cannot be negative.\n")
+                    print("\nNumber of nodes cannot be negative.")
                     continue
             except (TypeError, ValueError):
-                print("Number of nodes must be an integer.\n")
+                print("\nNumber of nodes must be an integer.")
             else:
                 print()
                 break
@@ -222,7 +250,7 @@ class App:
         if self.ll:
             return True
         else:
-            print("No Linked List yet. Create a linked list by choosing 1 in Main Menu.")
+            print("\nNo Linked List yet. Create a linked list by choosing 1 in Main Menu.")
             return False
 
     def ask_for_position(self, msg):
