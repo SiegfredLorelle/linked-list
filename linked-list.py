@@ -1,16 +1,21 @@
 import sys
 
 class Node:
+    """ Node consisting of element and next """
     def __init__(self, element):
+        """ Element aka value/data, next is a pointer to the next node"""
         self.element = element
         self.next = None
 
 class Linked_List:
+    """ A collection of connected nodes """
     def __init__(self):
+        """ Linked list starts at the head node and ends with the tail node """
         self.head = None
         self.tail = None
 
     def create_list(self, elements):
+        """ Creatses a linked list, assigning a node for each element, connecting the nodes exactly as how the elements are sequenced """
         # If no elements, then just inform user that linked list is made with no nodes
         if len(elements) <= 0:
             return
@@ -18,6 +23,7 @@ class Linked_List:
         # Create a node for first element and set it as head
         self.head = Node(elements[0])
 
+        # If given elements are more than 1
         if len(elements) > 1:
             # Create a node for each element and set the pointer accordingly
             current = self.head
@@ -27,6 +33,7 @@ class Linked_List:
 
 
     def add_at_beginning(self, element):
+        """ Create a node with the value of the given element at the start of the link list """
         # Create a node for the new element
         added_node = Node(element)
         # If there are other nodes, then point the new node to the head of linked list
@@ -37,6 +44,7 @@ class Linked_List:
 
 
     def add_after(self, element, position):
+        """ Insert a node containing the value of the given element after the node at the given position """
         # Traverse the linked list until the given position is reached (counter represents current position)
         counter = 1
         current = self.head
@@ -53,6 +61,7 @@ class Linked_List:
 
 
     def delete(self, element):
+        """ Delete the first node found containing the given element """
         current = self.head
         # Check the if the element to be deleted is in the first node, if yes then point head to next node (also point deleted node to None)
         if current.element == element:
@@ -60,7 +69,7 @@ class Linked_List:
             current.next = None
             self.head = after_delete_node
 
-        # Check if the element of the next node is the element to be deleted, if yes then point to where the next node points (also point deleted node to None)
+        # Check if the element of the next node is the element to be deleted, if yes then point current node to where the next node points (also point deleted node to None)
         else:
             while current.next:
                 if current.next.element == element:
@@ -76,6 +85,7 @@ class Linked_List:
 
 
     def display(self):
+        """ Display the elements and the pointers of each node of the linked list """
         # If linked list is empty inform the user about it
         if not self.head:
             print("\nLinked list seems to be empty.")
@@ -96,44 +106,58 @@ class Linked_List:
 
 
     def count(self):
+        """ Return the number of nodes the linked list has """
+        # If linked list is empty, return 0 because no nodes
         if not self.head:
             return 0
-        
+
+        # Traverse the linked list, incrementing the counter as each node passes
         counter = 0
         current = self.head
         while current != None:
             current = current.next
             counter += 1
-
+        # Return number of nodes after traversing the entire linked list
         return counter
 
 
     def reverse(self, node):
-        """ Recusrive """
+        """ Reverse the linked list recursively """
+        # Base case: if at the end of the linked list
         if not node.next:
+            # Swap the head and tail, and point the new tail to none/null
             self.tail, self.head = self.head, self.tail
             self.tail.next = None
+            # Return the current node aka new head (received as the node at right by the previous 2nd to the last node)
             return self.head
         
+        # Point the node at the right to current node (left)
         node_at_right = self.reverse(node.next)
         node_at_right.next = node
+        # Return current node (received as the node at right by the node at left)
         return node
 
     def search(self, element):
+        """ Find the first node containing the given element """
+        # Traverse the linked list until the given element is found
         current = self.head
         position = 1
         while current:
+            # If found, then print its position
             if current.element == element:
                 print(f"\nElement '{element}' is found at position {position}.")
                 return
             # Go to next node
             current = current.next
             position += 1
+
+        # If it did not return within while block, then the element is not found
         print(f"\nElement '{element}' is NOT found in the linked list.")
             
 
 
 class App:
+    """ Holds the linked list, manages communication between user and program """
     input_choice_keys = {1: "create list", 2: "add at beginning", 3: "add after", 4: "delete", 5: "display", 6: "count", 7: "reverse", 8: "search", 9: "quit"}
 
     def __init__(self):
@@ -141,6 +165,7 @@ class App:
         self.main_menu()
 
     def main_menu(self):
+        """ Shows user possible commands and ask which one to execute """
         print("\nMain Menu\n")
         print("[1] Create list\n[2] Add at beginning\n[3] Add after\n[4] Delete\n[5] Display\n[6] Count\n[7] Reverse\n[8] Search\n[9] Quit\n")
 
@@ -177,7 +202,7 @@ class App:
 
             # Create a linked list
             self.ll = Linked_List()
-            # Asks infos needed to create the linked list
+            # Asks infos needed to create the nodes of the linked list
             elements = self.ask_ll_info()
             # Add the nodes to the linked list using the given elements, then display the linked list
             self.ll.create_list(elements)
@@ -234,6 +259,7 @@ class App:
                 self.ll.search(element)
 
         elif self.input_choice_keys[choice] == "quit":
+            # Exits the program
             sys.exit("\nClosing the program ...\n")
 
         # Add a buffer after every command to let user read infos before going back to main menu
@@ -263,7 +289,7 @@ class App:
         return elements
 
     def ask_for_element(self, msg):
-        """ Ask for an element/value, and converts it to int or float if necessary """
+        """ Ask for an element/value/data, and converts it to int or float if necessary """
         while True:
             element = input(msg)
             if not element:
@@ -314,7 +340,3 @@ class App:
 
 if __name__ == "__main__":
     App()
-
-
-# TODO
-# When creating linked list and a current linked list exists, ask again to if user want to delete current linked list
