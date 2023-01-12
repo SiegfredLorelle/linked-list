@@ -191,7 +191,7 @@ class App:
             if self.ll and self.ll.count() != 0:
                 while True:
                     try:
-                        create_new_ll = input("\nA linked list already exists. Would you like to create a new one, which overwrites the current linked list? [y/n]:  ")[0].lower()
+                        create_new_ll = input("\nLinked list already exists. Would you like to create a new one, overwriting the current linked list? [y/n]:  ")[0].lower()
                         if create_new_ll == "n":
                             input("\nPress enter to proceed ...  ")
                             self.main_menu()
@@ -253,7 +253,7 @@ class App:
 
         elif self.input_choice_keys[choice] == "search":
             # Ensures the linked list exists, and that it is not empty
-            if self.ll_exist():
+            if self.ll_exist() and not self.ll_empty():
                 # Asks for element to search, and search for it
                 element = self.ask_for_element("\nEnter element to search:  ")
                 self.ll.search(element)
@@ -328,7 +328,7 @@ class App:
                     print("\nPosition must be positive (first position is 1).")
                     continue
                 elif position > self.ll.count():
-                    print(f"There are only {self.ll.count()} node(s).\n")
+                    print(f"\nThere are only {self.ll.count()} node(s).")
                     continue
             except (TypeError, ValueError):
                 print("\nPosition must be an integer.")
